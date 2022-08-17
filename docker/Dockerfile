@@ -1,20 +1,9 @@
-FROM debian:bookworm AS base-image
-RUN apt-get update && \
-    apt-get install --assume-yes --no-install-recommends python3 && \
-    useradd -m --shell /bin/bash -u 1000 non_privileged_user && \
-    export SITE_PACKAGE=$(python3 -c "import site;print(site.getsitepackages()[0])")
+ARG DEBIAN_VERSION=bookworm
 
-FROM base-image AS compile-image
-RUN apt-get install -y --no-install-recommends make git python3-pip &&\
-    pip install --upgrade pip
-
-WORKDIR /usr/app
-COPY . .
+FROM nymann/debian-python3-dev:$DEBIAN_VERSION AS compile-image
+COPY --chown=$USERNAME:$USERNAME . .
 RUN make install
 
-FROM base-image AS production-image
-COPY --from=compile-image $SITE_PACKAGE $SITE_PACKAGE
-COPY --from=compile-image /usr/local/bin/auth_service /usr/local/bin/
-
-USER non_privileged_user
-CMD auth_service --help
+FROM nymann/debian-python3:$DEBIAN_VERSION AS production-image
+USER $USERNAME
+COPY --from=compile-image --chown=$USERNAME:$USERNAME "$VENV" "$VENV"
