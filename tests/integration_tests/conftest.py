@@ -1,20 +1,19 @@
 from typing import Iterable
 
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 import pytest
-from starlette import testclient
-from starlette.testclient import TestClient
 
 from auth_service.api import AuthService
 from auth_service.core.config import AuthConfig
 
 
 @pytest.fixture
-def app():
+def app() -> FastAPI:
     return AuthService(config=AuthConfig()).api
 
 
 @pytest.fixture
 def client(app: FastAPI) -> Iterable[TestClient]:
-    with testclient.TestClient(app) as client:
+    with TestClient(app) as client:
         yield client

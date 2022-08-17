@@ -1,10 +1,12 @@
 from pydantic import BaseSettings
+from pydantic import SecretStr
 
 from auth_service import version
 
 
 class AuthSettings(BaseSettings):
     auth_title: str
+    secret: SecretStr
 
     class Config:
         env_file = ".env"
