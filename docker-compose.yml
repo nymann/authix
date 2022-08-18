@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  revocation_redis:
+    container_name: revocation_redis
+    build:
+      context: docker
+      dockerfile: redis.Dockerfile
+    networks:
+      - redis_network
+    ports:
+      - 6378:6379
+    volumes:
+      - ./docker/redis.conf:/usr/local/etc/redis/redis.conf
+      - /tmp/revocation_redis_data:/data
+  refresh_redis:
+    container_name: refresh_redis
+    build:
+      context: docker
+      dockerfile: redis.Dockerfile
+    networks:
+      - redis_network
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis.conf:/usr/local/etc/redis/redis.conf
+      - /tmp/refresh_redis_data:/data
+
+networks:
+  redis_network:

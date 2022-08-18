@@ -1,6 +1,3 @@
-from datetime import datetime
-from datetime import timezone
-from typing import Any
 from uuid import uuid4
 
 from fastapi import HTTPException
@@ -9,7 +6,6 @@ from pydantic import BaseModel
 
 from auth_service.data.query_exceptions import QueryResultNotFoundError
 from auth_service.data.refresh.refresh_queries import RefreshQueries
-from auth_service.data.revoke.revoke_queries import RevokeQueries
 from auth_service.data.users.user_queries import UserQueries
 from auth_service.domain.token_service import TokenService
 
@@ -23,12 +19,10 @@ class AuthenticationService:
     def __init__(
         self,
         user_queries: UserQueries,
-        revoke_queries: RevokeQueries,
         refresh_queries: RefreshQueries,
         token_service: TokenService,
     ) -> None:
         self._user_queries = user_queries
-        self._revoke_queries = revoke_queries
         self._refresh_queries = refresh_queries
         self._token_service = token_service
 
@@ -50,15 +44,3 @@ class AuthenticationService:
         user_id = await self._refresh_queries.get_user_id(refresh_token=refresh_token)
         user = await self._user_queries.get_user_by_id(user_id=user_id)
         return self._token_service.create_access_token(user=user)
-
-    async def client_implementation(self, access_token: str) -> dict[str, Any]:
-        decoded_data: dict[str, Any] = self._token_service.decode(access_token=access_token)
-        user_id: str = decoded_data["id"]
-        try:
-            revoked_dt = await self._revoke_queries.get(user_id=user_id)
-        except QueryResultNotFoundError:
-            return decoded_data
-        exp: datetime = datetime.fromtimestamp(decoded_data["exp"], tz=timezone.utc)
-        if exp < revoked_dt:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Revoked token")
-        return decoded_data
