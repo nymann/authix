@@ -4,8 +4,8 @@ from pydantic import UUID4
 
 from auth_service.data.query_exceptions import QueryResultNotFoundError
 from auth_service.data.query_exceptions import UserAlreadyExistsError
-from auth_service.data.users.user_model import UserModel
-from auth_service.data.users.user_queries import UserQueries
+from auth_service.data.users.model import UserModel
+from auth_service.data.users.queries.interface import UserQueries
 
 
 class InMemoryUserQueries(UserQueries):

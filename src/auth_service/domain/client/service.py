@@ -6,8 +6,8 @@ from fastapi import HTTPException
 from fastapi import status
 
 from auth_service.data.query_exceptions import QueryResultNotFoundError
-from auth_service.data.revoke.revoke_queries import RevokeQueries
-from auth_service.domain.token_service import TokenService
+from auth_service.data.revocation.queries.interface import RevokeQueries
+from auth_service.domain.token.service import TokenService
 
 
 class ClientImplementationService:

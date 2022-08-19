@@ -4,7 +4,7 @@ from typing import Optional
 from redis import StrictRedis
 
 from auth_service.data.query_exceptions import QueryResultNotFoundError
-from auth_service.data.revoke.revoke_queries import RevokeQueries
+from auth_service.data.revocation.queries.interface import RevokeQueries
 
 
 class RedisRevokeQueries(RevokeQueries):

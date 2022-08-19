@@ -5,11 +5,11 @@ from fastapi import Depends
 
 from auth_service.core.config import AuthConfig
 from auth_service.core.service_container import ServiceContainer
-from auth_service.domain.authentication_service import AuthResponse
-from auth_service.domain.authentication_service import AuthenticationService
-from auth_service.domain.client_implementation_service import ClientImplementationService
-from auth_service.domain.registration_service import RegistrationService
-from auth_service.domain.revocation_service import RevocationService
+from auth_service.domain.authentication.service import AuthResponse
+from auth_service.domain.authentication.service import AuthenticationService
+from auth_service.domain.client.service import ClientImplementationService
+from auth_service.domain.registration.service import RegistrationService
+from auth_service.domain.revocation.service import RevocationService
 
 auth_router = APIRouter(tags=["Authentication"])
 
@@ -26,7 +26,7 @@ async def login(email: str, password: str, service: AuthenticationService = AUTH
     return await service.authenticate(email=email, password=password)
 
 
-@auth_router.delete("/logout")
+@auth_router.delete("/logout", response_model=None)
 async def logout(refresh_token: str, service: RevocationService = REVOCATION_SERVICE) -> None:
     """Log a user out by deleting their refresh token, and broadcasting a revoke event."""
     return await service.revoke(refresh_token=refresh_token)
@@ -38,7 +38,7 @@ async def create_access_token(refresh_token: str, service: AuthenticationService
     return await service.create_access_token(refresh_token=refresh_token)
 
 
-@auth_router.get("/test")
+@auth_router.get("/test", response_model=dict[str, Any])
 async def test_access_token(
     access_token: str,
     service: ClientImplementationService = CLIENT_IMPLEMENTATION_SERVICE,
@@ -47,7 +47,7 @@ async def test_access_token(
     return await service.client_implementation(access_token=access_token)
 
 
-@auth_router.post("/register")
+@auth_router.post("/register", response_model=None)
 async def register(
     email: str,
     password: str,

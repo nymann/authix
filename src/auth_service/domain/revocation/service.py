@@ -3,8 +3,8 @@ from datetime import timedelta
 from datetime import timezone
 import logging
 
-from auth_service.data.refresh.refresh_queries import RefreshQueries
-from auth_service.data.revoke.revoke_queries import RevokeQueries
+from auth_service.data.refresh_token.queries.interface import RefreshQueries
+from auth_service.data.revocation.queries.interface import RevokeQueries
 
 
 class RevocationService:

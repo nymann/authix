@@ -2,7 +2,7 @@ from typing import Protocol
 
 from pydantic import UUID4
 
-from auth_service.data.users.user_model import UserModel
+from auth_service.data.users.model import UserModel
 
 
 class UserQueries(Protocol):

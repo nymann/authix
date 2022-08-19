@@ -7,7 +7,7 @@ from jose import jwt
 from passlib.context import CryptContext
 from pydantic.types import SecretStr
 
-from auth_service.data.users.user_model import UserModel
+from auth_service.data.users.model import UserModel
 
 
 class TokenService:

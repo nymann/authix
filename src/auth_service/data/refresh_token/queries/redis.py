@@ -5,7 +5,7 @@ from pydantic import UUID4
 from redis import StrictRedis
 
 from auth_service.data.query_exceptions import QueryResultNotFoundError
-from auth_service.data.refresh.refresh_queries import RefreshQueries
+from auth_service.data.refresh_token.queries.interface import RefreshQueries
 
 
 class RedisRefreshQueries(RefreshQueries):
