@@ -2,8 +2,8 @@ from fastapi import HTTPException
 from fastapi import status
 
 from auth_service.data.query_exceptions import UserAlreadyExistsError
-from auth_service.data.users.user_queries import UserQueries
-from auth_service.domain.token_service import TokenService
+from auth_service.data.users.queries.interface import UserQueries
+from auth_service.domain.token.service import TokenService
 
 
 class RegistrationService:

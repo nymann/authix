@@ -1,12 +1,12 @@
 from auth_service.core.config import AuthConfig
-from auth_service.data.refresh.redis_refresh_queries import RedisRefreshQueries
-from auth_service.data.revoke.redis_revoke_queries import RedisRevokeQueries
-from auth_service.data.users.in_memory_user_query import InMemoryUserQueries
-from auth_service.domain.authentication_service import AuthenticationService
-from auth_service.domain.client_implementation_service import ClientImplementationService
-from auth_service.domain.registration_service import RegistrationService
-from auth_service.domain.revocation_service import RevocationService
-from auth_service.domain.token_service import TokenService
+from auth_service.data.refresh_token.queries.redis import RedisRefreshQueries
+from auth_service.data.revocation.queries.redis import RedisRevokeQueries
+from auth_service.data.users.queries.in_memory import InMemoryUserQueries
+from auth_service.domain.authentication.service import AuthenticationService
+from auth_service.domain.client.service import ClientImplementationService
+from auth_service.domain.registration.service import RegistrationService
+from auth_service.domain.revocation.service import RevocationService
+from auth_service.domain.token.service import TokenService
 
 
 class ServiceContainer:
