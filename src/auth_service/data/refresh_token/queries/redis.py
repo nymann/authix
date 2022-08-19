@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import Optional
 
+from pydantic import RedisDsn
 from pydantic import UUID4
 from redis import StrictRedis
 
@@ -9,9 +10,8 @@ from auth_service.data.refresh_token.queries.interface import RefreshQueries
 
 
 class RedisRefreshQueries(RefreshQueries):
-    def __init__(self, **redis_args: str | int) -> None:
-        self._redis = StrictRedis(**redis_args, encoding="utf-8", decode_responses=True)
-        self._redis.ping()
+    def __init__(self, dsn: RedisDsn) -> None:
+        self._redis = StrictRedis.from_url(url=dsn, encoding="utf-8", decode_responses=True)
 
     async def get_user_id(self, refresh_token: str) -> UUID4:
         user_id: Optional[str] = self._redis.get(refresh_token)

@@ -13,14 +13,8 @@ class ServiceContainer:
     def __init__(self, config: AuthConfig) -> None:
         self._config = config
         self._user_queries = InMemoryUserQueries()
-        self._revoke_queries = RedisRevokeQueries(
-            password=config.settings.client_redis_password.get_secret_value(),
-            port=config.settings.client_redis_port,
-        )
-        self._refresh_queries = RedisRefreshQueries(
-            password=config.settings.refresh_redis_password.get_secret_value(),
-            port=config.settings.refresh_redis_port,
-        )
+        self._revoke_queries = RedisRevokeQueries(dsn=config.settings.client_redis)
+        self._refresh_queries = RedisRefreshQueries(dsn=config.settings.refresh_redis)
 
     def authentication_service(self) -> AuthenticationService:
         return AuthenticationService(
