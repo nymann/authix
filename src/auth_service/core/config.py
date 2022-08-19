@@ -1,4 +1,5 @@
 from pydantic import BaseSettings
+from pydantic import RedisDsn
 from pydantic import SecretStr
 
 from auth_service import version
@@ -7,10 +8,8 @@ from auth_service import version
 class AuthSettings(BaseSettings):
     auth_title: str
     secret: SecretStr
-    client_redis_password: SecretStr
-    client_redis_port: int
-    refresh_redis_password: SecretStr
-    refresh_redis_port: int = 6379
+    client_redis: RedisDsn
+    refresh_redis: RedisDsn
 
     class Config:
         env_file = ".env"

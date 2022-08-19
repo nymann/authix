@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from pydantic import RedisDsn
 from redis import StrictRedis
 
 from auth_service.data.query_exceptions import QueryResultNotFoundError
@@ -8,9 +9,8 @@ from auth_service.data.revocation.queries.interface import RevokeQueries
 
 
 class RedisRevokeQueries(RevokeQueries):
-    def __init__(self, **redis_args: str | int) -> None:
-        self._redis = StrictRedis(**redis_args, encoding="utf-8", decode_responses=True)
-        self._redis.ping()
+    def __init__(self, dsn: RedisDsn) -> None:
+        self._redis = StrictRedis.from_url(url=dsn, encoding="utf-8", decode_responses=True)
 
     async def get(self, user_id: str) -> datetime:
         ts_isoformat: Optional[str] = self._redis.get(user_id)
