@@ -1,18 +1,27 @@
 from starlette.status import HTTP_200_OK
 from starlette.status import HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_409_CONFLICT
 from starlette.testclient import TestClient
+
+EMAIL = "contact@nymann.dev"
+PASSWORD = "test123"  # noqa: S105 test password
 
 
 def valid_login(client: TestClient) -> tuple[str, str]:
-    response = client.post(
-        "/login",
-        params={"email": "kristian@nymann.dev", "password": "test123"},
-    )
+    query_params = {"email": EMAIL, "password": PASSWORD}
+    register(query_params=query_params, client=client)
+
+    response = client.post("/login", params=query_params)
     assert response.status_code == HTTP_200_OK
     token_dict = response.json()
     access_token: str = token_dict["access_token"]
     refresh: str = token_dict["refresh_token"]
     return access_token, refresh
+
+
+def register(query_params: dict[str, str], client: TestClient) -> None:
+    response = client.post("/register", params=query_params)
+    assert response.status_code in {HTTP_409_CONFLICT, HTTP_200_OK}
 
 
 def test_access_token(client: TestClient) -> None:
