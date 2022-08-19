@@ -11,3 +11,6 @@ class UserQueries(Protocol):
 
     async def get_user_by_id(self, user_id: UUID4) -> UserModel:
         raise NotImplementedError()
+
+    async def add_user(self, email: str, password_hash: str) -> UserModel:
+        raise NotImplementedError()
