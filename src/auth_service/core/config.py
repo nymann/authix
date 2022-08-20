@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic import BaseSettings
 from pydantic import RedisDsn
 from pydantic import SecretStr
@@ -10,6 +12,7 @@ class AuthSettings(BaseSettings):
     secret: SecretStr
     client_redis: RedisDsn
     refresh_redis: RedisDsn
+    key_folder: Path
 
     class Config:
         env_file = ".env"

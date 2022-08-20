@@ -4,6 +4,7 @@ from auth_service.data.revocation.queries.redis import RedisRevokeQueries
 from auth_service.data.users.queries.in_memory import InMemoryUserQueries
 from auth_service.domain.authentication.service import AuthenticationService
 from auth_service.domain.client.service import ClientImplementationService
+from auth_service.domain.key.service import KeyService
 from auth_service.domain.registration.service import RegistrationService
 from auth_service.domain.revocation.service import RevocationService
 from auth_service.domain.token.service import TokenService
@@ -30,7 +31,10 @@ class ServiceContainer:
         )
 
     def token_service(self) -> TokenService:
-        return TokenService(secret=self._config.settings.secret)  # noqa: S106
+        return TokenService(key_service=self.key_service())  # noqa: S106
+
+    def key_service(self) -> KeyService:
+        return KeyService(config=self._config)
 
     def client_implementation_service(self) -> ClientImplementationService:
         return ClientImplementationService(
