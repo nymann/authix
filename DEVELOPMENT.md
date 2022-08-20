@@ -5,9 +5,9 @@ By installing `make` you can do the following:
 ```sh
 $ make help
 make install
- - Installs auth_service.
+ - Installs authix.
 make install-all
- - Install auth_service, all development and tests dependencies.
+ - Install authix, all development and tests dependencies.
 make test
  - Runs integration tests and unit tests
 make unit-test

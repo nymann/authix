@@ -4,8 +4,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 import pytest
 
-from auth_service.api import AuthService
-from auth_service.core.config import AuthConfig
+from authix.api import AuthService
+from authix.core.config import AuthConfig
 
 
 @pytest.fixture

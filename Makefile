@@ -1,4 +1,4 @@
-COMPONENT?=auth_service
+COMPONENT?=authix
 VERSION:=src/${COMPONENT}/version.py
 
 include make/common.mk
