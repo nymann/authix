@@ -1,4 +1,6 @@
-# Auth Service
+# Authix
+
+_Authentication as a microservice_
 
 ## Development
 
