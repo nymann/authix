@@ -19,7 +19,7 @@ class InMemoryUserQueries(UserQueries):
         except KeyError as error:
             raise QueryResultNotFoundError from error
 
-    async def ger_user_by_email(self, email: str) -> UserModel:
+    async def get_user_by_email(self, email: str) -> UserModel:
         try:
             return self._email_lookup[email]
         except KeyError as error:

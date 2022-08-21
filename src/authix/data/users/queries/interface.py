@@ -6,7 +6,7 @@ from authix.data.users.model import UserModel
 
 
 class UserQueries(Protocol):
-    async def ger_user_by_email(self, email: str) -> UserModel:
+    async def get_user_by_email(self, email: str) -> UserModel:
         raise NotImplementedError()
 
     async def get_user_by_id(self, user_id: UUID4) -> UserModel:

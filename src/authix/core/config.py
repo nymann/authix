@@ -11,6 +11,7 @@ class AuthSettings(BaseSettings):
     client_redis: RedisDsn
     refresh_redis: RedisDsn
     key_folder: Path
+    mongodb_url: str
 
     class Config:
         env_file = ".env"

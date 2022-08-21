@@ -25,6 +25,18 @@ services:
     volumes:
       - ./docker/redis.conf:/usr/local/etc/redis/redis.conf
       - /tmp/refresh_redis_data:/data
+  user_mongodb:
+    image: mongo:latest
+    container_name: user_mongodb
+    networks:
+      - redis_network
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: authix
+      MONGO_INITDB_ROOT_PASSWORD: test123
+    volumes:
+      - /tmp/authix_mongo_db:/data/db
 
 networks:
   redis_network:

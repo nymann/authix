@@ -28,7 +28,7 @@ class AuthenticationService:
 
     async def authenticate(self, email: str, password: str) -> AuthResponse:
         try:
-            user = await self._user_queries.ger_user_by_email(email=email)
+            user = await self._user_queries.get_user_by_email(email=email)
         except QueryResultNotFoundError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
