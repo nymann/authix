@@ -1,19 +1,20 @@
 ### Cross platform development
 
+In order to start redis and MongoDB you can use `docker-compose up -d`.
+
 By installing `make` you can do the following:
 
 ```sh
-$ make help
+make run
+ - Runs Authix, installs things if necessary.
 make install
  - Installs authix.
 make install-all
  - Install authix, all development and tests dependencies.
 make test
- - Runs integration tests and unit tests
-make unit-test
- - Runs integration tests
-make integration-tests
  - Runs unit tests
+make integration
+ - Runs integration tests
 make lint
  - Lints your code (black, flake8 and mypy).
 make fix
