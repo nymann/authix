@@ -1,4 +1,4 @@
-DOCKER_REPO?=https://registry.nymann.dev/nymann/authix
+DOCKER_REPO?=registry.nymann.dev/nymann/authix
 DOCKER_TAG?=${DOCKER_REPO}:$(shell git describe --tag --always | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
 
 package: ${VERSION} setup.py
