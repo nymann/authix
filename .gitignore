@@ -24,3 +24,6 @@ htmlcov
 .idea
 .cache/
 keys/
+dist/
+.eggs/
+src/authix/core/version.py
