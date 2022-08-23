@@ -53,7 +53,6 @@ async def test_access_token(
     """Client implementation of Auth Service."""
     if authorization is None:
         raise HTTPException(400)
-    debug(authorization)
     return await service.client_implementation(access_token=authorization)
 
 

@@ -39,5 +39,5 @@ def test_revoke(client: TestClient) -> None:
 
 def test_create_access_token_from_refresh(client: TestClient) -> None:
     _, refresh = valid_login(client=client)
-    response = client.post("/access_token", params={"refresh_token": refresh})
+    response = client.post("/access_token", cookies={"refresh_token": refresh})
     assert response.status_code == HTTP_200_OK
