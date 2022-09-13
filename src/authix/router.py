@@ -1,16 +1,11 @@
-from typing import Any
-
 from fastapi import APIRouter
 from fastapi import Cookie
 from fastapi import Depends
-from fastapi import HTTPException
-from fastapi import Header
 from fastapi import Response
 
 from authix.core.config import AuthConfig
 from authix.core.service_container import ServiceContainer
 from authix.domain.authentication.service import AuthenticationService
-from authix.domain.client.service import ClientImplementationService
 from authix.domain.key.service import KeyService
 from authix.domain.registration.service import RegistrationService
 from authix.domain.revocation.service import RevocationService
@@ -20,7 +15,6 @@ auth_router = APIRouter(tags=["Authentication"])
 service_manager = ServiceContainer(config=AuthConfig())
 AUTH_SERVICE = Depends(service_manager.authentication_service)
 REVOCATION_SERVICE = Depends(service_manager.revocation_service)
-CLIENT_IMPLEMENTATION_SERVICE = Depends(service_manager.client_implementation_service)
 REGISTRATION_SERVICE = Depends(service_manager.registration_service)
 KEY_SERVICE = Depends(service_manager.key_service)
 
@@ -43,17 +37,6 @@ async def logout(refresh_token: str = Cookie(default=None), service: RevocationS
 async def create_access_token(refresh_token: str = Cookie(...), service: AuthenticationService = AUTH_SERVICE) -> str:
     """Create a new JWT access token from a refresh token."""
     return await service.create_access_token(refresh_token=refresh_token)
-
-
-@auth_router.get("/test", response_model=dict[str, Any])
-async def test_access_token(
-    authorization: str = Header(...),
-    service: ClientImplementationService = CLIENT_IMPLEMENTATION_SERVICE,
-) -> dict[str, Any]:
-    """Client implementation of Auth Service."""
-    if authorization is None:
-        raise HTTPException(400)
-    return await service.client_implementation(access_token=authorization)
 
 
 @auth_router.post("/register", response_model=None)

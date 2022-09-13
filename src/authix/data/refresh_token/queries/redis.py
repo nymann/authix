@@ -6,10 +6,9 @@ from pydantic import UUID4
 from redis import StrictRedis
 
 from authix.data.query_exceptions import QueryResultNotFoundError
-from authix.data.refresh_token.queries.interface import RefreshQueries
 
 
-class RedisRefreshQueries(RefreshQueries):
+class RedisRefreshQueries:
     def __init__(self, dsn: RedisDsn) -> None:
         self._redis = StrictRedis.from_url(url=dsn, encoding="utf-8", decode_responses=True)
 

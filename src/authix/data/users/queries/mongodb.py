@@ -8,12 +8,11 @@ from authix.core.config import AuthConfig
 from authix.data.query_exceptions import QueryResultNotFoundError
 from authix.data.query_exceptions import UserAlreadyExistsError
 from authix.data.users.model import UserModel
-from authix.data.users.queries.interface import UserQueries
 
 
-class MongoDBUserQueries(UserQueries):
+class MongoDBUserQueries:
     def __init__(self, config: AuthConfig) -> None:
-        self._client = MongoClient(config.settings.mongodb_url)
+        self._client: MongoClient = MongoClient(config.settings.mongodb_url)
         self._db = self._client.users
         self._users = self._db.users
 

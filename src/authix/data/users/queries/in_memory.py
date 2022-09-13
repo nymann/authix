@@ -5,10 +5,9 @@ from pydantic import UUID4
 from authix.data.query_exceptions import QueryResultNotFoundError
 from authix.data.query_exceptions import UserAlreadyExistsError
 from authix.data.users.model import UserModel
-from authix.data.users.queries.interface import UserQueries
 
 
-class InMemoryUserQueries(UserQueries):
+class InMemoryUserQueries:
     def __init__(self) -> None:
         self._users: dict[UUID4, UserModel] = {}
         self._email_lookup: dict[str, UserModel] = {}

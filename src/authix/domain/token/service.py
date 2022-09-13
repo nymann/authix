@@ -1,7 +1,6 @@
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
-from typing import Any
 
 import jwt
 from passlib.context import CryptContext
@@ -29,7 +28,3 @@ class TokenService:
         }
         private_key = self._key_service.get_private_key()
         return jwt.encode(payload=claims, key=private_key, algorithm="RS256")
-
-    def decode(self, access_token: str) -> dict[str, Any]:
-        public_key = self._key_service.get_public_key()
-        return jwt.decode(jwt=access_token, key=public_key, algorithms=["RS256"])

@@ -1,8 +1,6 @@
-from fastapi import HTTPException
-from fastapi import status
-
 from authix.data.query_exceptions import UserAlreadyExistsError
 from authix.data.users.queries.interface import UserQueries
+from authix.domain.domain_exceptions import Conflict
 from authix.domain.token.service import TokenService
 
 
@@ -16,4 +14,4 @@ class RegistrationService:
         try:
             await self._user_queries.add_user(email=email, password_hash=password_hash)
         except UserAlreadyExistsError:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exists")
+            raise Conflict(f"User with email: {email} already exists.")
