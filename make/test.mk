@@ -1,7 +1,7 @@
 ensure-test-dependencies:
 	command -v pytest 2>/dev/null || make install-tests
 
-test: ${VERSION} ensure-test-dependencies keys/private.pem
+test: ${VERSION} ensure-test-dependencies keys/public.pem
 	pytest tests/unit_tests
 
 
