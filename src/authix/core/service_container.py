@@ -12,7 +12,7 @@ class ServiceContainer:
     def __init__(self, config: AuthConfig) -> None:
         self.config = config
         self.user_queries = MongoDBUserQueries(config=config)
-        self.refresh_queries = RedisRefreshQueries(dsn=config.settings.refresh_redis)
+        self.refresh_queries = RedisRefreshQueries(dsn=config.refresh_redis)
 
     def authentication_service(self) -> AuthenticationService:
         return AuthenticationService(

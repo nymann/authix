@@ -12,7 +12,7 @@ from authix.data.users.model import UserModel
 
 class MongoDBUserQueries:
     def __init__(self, config: AuthConfig) -> None:
-        self._client: MongoClient = MongoClient(config.settings.mongodb_url)
+        self._client: MongoClient = MongoClient(config.mongodb_url)
         self._db = self._client.users
         self._users = self._db.users
 
@@ -24,6 +24,13 @@ class MongoDBUserQueries:
         user = self._users.find_one({"id": str(user_id)})
         return self._transform_query_result(user)
 
+    async def add_user(self, email: str, password_hash: str) -> UserModel:
+        try:
+            await self.get_user_by_email(email=email)
+        except QueryResultNotFoundError:
+            return self._create_user(email=email, password_hash=password_hash)
+        raise UserAlreadyExistsError
+
     def _transform_query_result(self, user: Optional[dict[str, Any]]) -> UserModel:
         if user is None:
             raise QueryResultNotFoundError
@@ -32,13 +39,6 @@ class MongoDBUserQueries:
             id=user["id"],
             password_hash=user["password_hash"],
         )
-
-    async def add_user(self, email: str, password_hash: str) -> UserModel:
-        try:
-            await self.get_user_by_email(email=email)
-        except QueryResultNotFoundError:
-            return self._create_user(email=email, password_hash=password_hash)
-        raise UserAlreadyExistsError
 
     def _create_user(self, email: str, password_hash: str) -> UserModel:
         user = UserModel(
@@ -51,6 +51,6 @@ class MongoDBUserQueries:
                 "email": user.email,
                 "password_hash": user.password_hash,
                 "id": str(user.id),
-            }
+            },
         )
         return user

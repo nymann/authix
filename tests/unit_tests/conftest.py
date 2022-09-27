@@ -1,6 +1,6 @@
-import pytest
 from pytest import ExitCode
 from pytest import Session
+from pytest import fixture
 
 from tests.service_container import TestServiceContainer
 
@@ -13,6 +13,6 @@ def pytest_sessionfinish(session: Session, exitstatus: int | ExitCode) -> None:
         session.exitstatus = SUCCESS
 
 
-@pytest.fixture()
+@fixture()
 def service_container() -> TestServiceContainer:
     return TestServiceContainer()

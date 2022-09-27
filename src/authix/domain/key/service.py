@@ -3,7 +3,7 @@ from authix.core.config import AuthConfig
 
 class KeyService:
     def __init__(self, config: AuthConfig) -> None:
-        self._key_folder = config.settings.key_folder
+        self._key_folder = config.key_folder
         self._private_key = self._read_key(name="private.pem")
         self._public_key = self._read_key(name="public.pem")
 

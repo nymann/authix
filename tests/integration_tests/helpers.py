@@ -5,7 +5,11 @@ from uuid import uuid4
 from fastapi.testclient import TestClient
 
 
-def valid_login(client: TestClient, email: Optional[str] = None, password: Optional[str] = None) -> tuple[str, str]:
+def valid_login(
+    client: TestClient,
+    email: Optional[str] = None,
+    password: Optional[str] = None,
+) -> tuple[str, str]:
     email = email or random_email()
     password = password or random_password()
 

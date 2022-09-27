@@ -5,12 +5,16 @@ from fastapi.testclient import TestClient
 import pytest
 
 from authix.api import AuthService
-from authix.core.config import AuthConfig
+from tests.service_container import TestServiceContainer
 
 
 @pytest.fixture
 def app() -> FastAPI:
-    return AuthService(config=AuthConfig()).api
+    test_service_container = TestServiceContainer()
+    return AuthService(
+        config=test_service_container.config,
+        service_container=test_service_container,
+    ).api
 
 
 @pytest.fixture
