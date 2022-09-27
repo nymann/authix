@@ -8,4 +8,4 @@ FROM nymann/debian-python3:$DEBIAN_VERSION AS production-image
 EXPOSE 80
 USER $USERNAME
 COPY --from=compile-image --chown=$USERNAME:$USERNAME "$VENV" "$VENV"
-RUN uvicorn authix.asgi:api --port 80 --host 0.0.0.0
+CMD uvicorn authix.asgi:api --port 80 --host 0.0.0.0
