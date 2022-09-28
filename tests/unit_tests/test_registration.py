@@ -5,7 +5,7 @@ from authix.domain.domain_exceptions import Conflict
 from tests.service_container import TestServiceContainer
 
 email = "test@example.org"
-password = "testing123"
+password = "testing123#@T"
 
 
 @pytest.mark.asyncio()
