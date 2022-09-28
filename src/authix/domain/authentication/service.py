@@ -1,6 +1,5 @@
 from uuid import uuid4
 
-from devtools import debug
 from pydantic import BaseModel
 
 from authix.data.query_exceptions import QueryResultNotFoundError
@@ -30,11 +29,9 @@ class AuthenticationService:
         try:
             user = await self._user_queries.get_user_by_email(email=email)
         except QueryResultNotFoundError:
-            debug("No user found")
             raise Unauthorized
 
         if not self._token_service.verify_password(plain_password=password, hashed_password=user.password_hash):
-            debug("Wrong password", password)
             raise Unauthorized
 
         refresh_token = str(uuid4())
