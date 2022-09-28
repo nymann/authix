@@ -30,7 +30,7 @@ def random_email() -> str:
 
 
 def random_password() -> str:
-    return str(uuid4())
+    return f"{uuid4()}!Aa"
 
 
 def _query_params(**kwargs: str) -> dict[str, str]:

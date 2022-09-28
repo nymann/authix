@@ -34,4 +34,5 @@ class ServiceContainer:
         return RegistrationService(
             token_service=self.token_service(),
             user_queries=self.user_queries,
+            config=self.config,
         )
