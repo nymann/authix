@@ -1,16 +1,20 @@
 from datetime import timedelta
 from typing import Optional
 
-from pydantic import RedisDsn
 from pydantic import UUID4
 from redis import StrictRedis
 
 from authix.data.query_exceptions import QueryResultNotFoundError
+from authix.data.refresh_token.refresh_token_queries import RefreshQueries
 
 
-class RedisRefreshQueries:
-    def __init__(self, dsn: RedisDsn) -> None:
-        self._redis = StrictRedis.from_url(url=dsn, encoding="utf-8", decode_responses=True)
+class RedisRefreshQueries(RefreshQueries):
+    def __init__(self, dsn: str) -> None:
+        self._redis = StrictRedis.from_url(
+            url=dsn,
+            encoding="utf-8",
+            decode_responses=True,
+        )
 
     async def get_user_id(self, refresh_token: str) -> UUID4:
         user_id: Optional[str] = self._redis.get(refresh_token)

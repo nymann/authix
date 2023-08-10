@@ -3,8 +3,8 @@ from uuid import uuid4
 from pydantic import BaseModel
 
 from authix.data.query_exceptions import QueryResultNotFoundError
-from authix.data.refresh_token.queries.interface import RefreshQueries
-from authix.data.users.queries.interface import UserQueries
+from authix.data.refresh_token.refresh_token_queries import RefreshQueries
+from authix.data.users.user_queries import UserQueries
 from authix.domain.domain_exceptions import Unauthorized
 from authix.domain.token.service import TokenService
 

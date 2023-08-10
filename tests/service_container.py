@@ -8,6 +8,6 @@ class TestServiceContainer(ServiceContainer):
     __test__ = False
 
     def __init__(self) -> None:
-        self.config = AuthConfig()
+        self.config = AuthConfig()  # type: ignore
         self.user_queries = InMemoryUserQueries()
         self.refresh_queries = InMemoryRefreshQueries()

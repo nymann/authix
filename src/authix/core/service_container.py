@@ -1,6 +1,8 @@
 from authix.core.config import AuthConfig
 from authix.data.refresh_token.queries.redis import RedisRefreshQueries
+from authix.data.refresh_token.refresh_token_queries import RefreshQueries
 from authix.data.users.queries.mongodb import MongoDBUserQueries
+from authix.data.users.user_queries import UserQueries
 from authix.domain.authentication.service import AuthenticationService
 from authix.domain.key.service import KeyService
 from authix.domain.registration.service import RegistrationService
@@ -11,8 +13,8 @@ from authix.domain.token.service import TokenService
 class ServiceContainer:
     def __init__(self, config: AuthConfig) -> None:
         self.config = config
-        self.user_queries = MongoDBUserQueries(config=config)
-        self.refresh_queries = RedisRefreshQueries(dsn=config.refresh_redis)
+        self.user_queries: UserQueries = MongoDBUserQueries(config=config)
+        self.refresh_queries: RefreshQueries = RedisRefreshQueries(dsn=config.refresh_redis)
 
     def authentication_service(self) -> AuthenticationService:
         return AuthenticationService(
