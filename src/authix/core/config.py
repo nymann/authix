@@ -1,15 +1,15 @@
 from pathlib import Path
 
-from pydantic import BaseSettings
-from pydantic import RedisDsn
+from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict
 
 from authix.version import __version__
 
 
 class AuthConfig(BaseSettings):
     auth_title: str
-    client_redis: RedisDsn
-    refresh_redis: RedisDsn
+    client_redis: str
+    refresh_redis: str
     key_folder: Path
     mongodb_url: str
     min_password_length: int
@@ -21,6 +21,4 @@ class AuthConfig(BaseSettings):
     min_number_of_digits: int
     version: str = __version__
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config: SettingsConfigDict = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")  # type:ignore

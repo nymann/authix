@@ -1,15 +1,12 @@
 import logging
 
 from authix.data.query_exceptions import QueryResultNotFoundError
-from authix.data.refresh_token.queries.interface import RefreshQueries
+from authix.data.refresh_token.refresh_token_queries import RefreshQueries
 from authix.domain.domain_exceptions import Unauthorized
 
 
 class RevocationService:
-    def __init__(
-        self,
-        refresh_queries: RefreshQueries,
-    ) -> None:
+    def __init__(self, refresh_queries: RefreshQueries) -> None:
         self._refresh_queries = refresh_queries
 
     async def revoke(self, refresh_token: str) -> None:
