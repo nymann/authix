@@ -1,7 +1,8 @@
 from pathlib import Path
 
-from pydantic import BaseSettings
 from pydantic import RedisDsn
+from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict
 
 from authix.version import __version__
 
@@ -21,6 +22,4 @@ class AuthConfig(BaseSettings):
     min_number_of_digits: int
     version: str = __version__
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config: SettingsConfigDict = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
