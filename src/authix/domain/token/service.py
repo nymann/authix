@@ -12,20 +12,20 @@ from authix.domain.key.service import KeyService
 class TokenService:
     def __init__(self, key_service: KeyService) -> None:
         self._key_service = key_service
-        self._encoding = "utf-8"
+        self._charset = "utf-8"
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         return bcrypt.checkpw(
-            plain_password.encode(self._encoding),
-            hashed_password.encode(self._encoding),
+            plain_password.encode(self._charset),
+            hashed_password.encode(self._charset),
         )
 
     def create_password_hash(self, plain_password: str) -> str:
         hashed_password = bcrypt.hashpw(
-            plain_password.encode(self._encoding),
+            plain_password.encode(self._charset),
             bcrypt.gensalt(),
         )
-        return hashed_password.decode(self._encoding)
+        return hashed_password.decode(self._charset)
 
     def create_access_token(self, user: UserModel) -> str:
         claims = {

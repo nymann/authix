@@ -24,7 +24,10 @@ class ServiceContainer:
         )
 
     def revocation_service(self) -> RevocationService:
-        return RevocationService(refresh_queries=self.refresh_queries)
+        return RevocationService(
+            refresh_queries=self.refresh_queries,
+            config=self.config.revocation,
+        )
 
     def token_service(self) -> TokenService:
         return TokenService(key_service=self.key_service())  # noqa: S106

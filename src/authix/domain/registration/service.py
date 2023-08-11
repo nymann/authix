@@ -16,7 +16,7 @@ class RegistrationService:
         self._token_service = token_service
         self._user_queries = user_queries
         self._config = config
-        self._password_validator = PasswordValidator(config=config)
+        self._password_validator = PasswordValidator(password_config=config.password)
 
     async def register(self, email: str, password: str) -> None:
         self._password_validator.validate(password=password)

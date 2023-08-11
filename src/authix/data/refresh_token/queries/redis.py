@@ -1,5 +1,6 @@
 from datetime import timedelta
 from typing import Optional
+from uuid import UUID
 
 from pydantic import UUID4
 from redis import StrictRedis
@@ -20,7 +21,7 @@ class RedisRefreshQueries(RefreshQueries):
         user_id: Optional[str] = self._redis.get(refresh_token)
         if user_id is None:
             raise QueryResultNotFoundError
-        return UUID4(user_id)
+        return UUID(user_id)
 
     async def add(self, refresh_token: str, user_id: UUID4) -> None:
         self._redis.set(refresh_token, str(user_id), ex=timedelta(weeks=4))

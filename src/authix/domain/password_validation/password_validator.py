@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import HTTPException
 
-from authix.core.config import AuthConfig
+from authix.core.config import PasswordConfig
 from authix.domain.password_validation.validator import Validator
 from authix.domain.password_validation.validators.ascii_only import AsciiOnlyValidator
 from authix.domain.password_validation.validators.max_length import MaxLengthValidator
@@ -19,17 +19,17 @@ class InvalidPasswordError(HTTPException):
 
 
 class PasswordValidator:
-    def __init__(self, config: AuthConfig) -> None:
+    def __init__(self, password_config: PasswordConfig) -> None:
         self.validators: list[Validator] = [
-            MinLengthValidator(minimum_length=config.min_password_length),
-            MaxLengthValidator(maximum_length=config.max_password_length),
+            MinLengthValidator(minimum_length=password_config.min_length),
+            MaxLengthValidator(maximum_length=password_config.max_length),
             MinSpecialSymbolsValidator(
-                symbols=config.password_symbols,
-                minimum_count=config.min_number_of_special_chars,
+                symbols=password_config.symbols,
+                minimum_count=password_config.min_special_chars,
             ),
-            MinDigitsValidator(minimum_digits=config.min_number_of_digits),
-            MinUppercaseValidator(minimum_count=config.min_number_of_uppercase_chars),
-            MinLowercaseValidator(minimum_count=config.min_number_of_lowercase_chars),
+            MinDigitsValidator(minimum_digits=password_config.min_digits),
+            MinUppercaseValidator(minimum_count=password_config.min_uppercase_chars),
+            MinLowercaseValidator(minimum_count=password_config.min_lowercase_chars),
             AsciiOnlyValidator(),
         ]
 

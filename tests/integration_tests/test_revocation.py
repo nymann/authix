@@ -13,5 +13,6 @@ def test_revoke(client: TestClient) -> None:
         email=f"{uuid4()}@example.org",
         password=TEST_PASSWORD,
     )
-    response = client.delete("/logout", cookies={"refresh_token": refresh})
+    client.cookies.set("refresh_token", refresh)
+    response = client.delete("/logout")
     assert response.status_code == HTTPStatus.OK
