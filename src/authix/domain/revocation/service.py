@@ -1,5 +1,7 @@
 import logging
 
+from pydantic import UUID4
+
 from authix.data.query_exceptions import QueryResultNotFoundError
 from authix.data.refresh_token.refresh_token_queries import RefreshQueries
 from authix.domain.domain_exceptions import Unauthorized
@@ -16,8 +18,8 @@ class RevocationService:
             raise Unauthorized
         await self._broadcast_revocation_event(refresh_token=refresh_token, user_id=user_id)
 
-    async def _revoke_refresh_token(self, refresh_token: str) -> str:
-        return str(await self._refresh_queries.delete(refresh_token=refresh_token))
+    async def _revoke_refresh_token(self, refresh_token: str) -> UUID4:
+        return await self._refresh_queries.delete(refresh_token=refresh_token)
 
-    async def _broadcast_revocation_event(self, user_id: str, refresh_token: str) -> None:
-        logging.info(f"{user_id} revoked their refresh_token ({refresh_token}")
+    async def _broadcast_revocation_event(self, user_id: UUID4, refresh_token: str) -> None:
+        logging.info(f"{user_id} revoked their refresh_token ({refresh_token})")

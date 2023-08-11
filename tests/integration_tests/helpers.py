@@ -14,7 +14,7 @@ def valid_login(
     password = password or random_password()
 
     register(client=client, email=email, password=password)
-    response = client.post("/login", params=_query_params(email=email, password=password))
+    response = client.post("/login", json={"email": email, "password": password})
     assert response.status_code == HTTPStatus.OK
     access_token: str = response.headers["Authorization"].split(" ")[1]
     refresh: str = response.cookies["refresh_token"]
@@ -22,7 +22,7 @@ def valid_login(
 
 
 def register(client: TestClient, email: str, password: str) -> int:
-    return client.post("/register", params=_query_params(email=email, password=password)).status_code
+    return client.post("/register", json={"email": email, "password": password}).status_code
 
 
 def random_email() -> str:
@@ -31,7 +31,3 @@ def random_email() -> str:
 
 def random_password() -> str:
     return f"{uuid4()}!Aa"
-
-
-def _query_params(**kwargs: str) -> dict[str, str]:
-    return kwargs
