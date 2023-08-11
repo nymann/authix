@@ -14,7 +14,7 @@ from authix.endpoints.register import Register
 
 class AuthService:
     def __init__(self, config: AuthConfig, service_container: ServiceContainer) -> None:
-        logging.basicConfig(level=logging.INFO, format="%(levelname)s:\t%(asctime)s\t%(message)s")  # noqa: WPS323
+        logging.basicConfig(level=config.log_level, format="%(levelname)s:\t%(asctime)s\t%(message)s")  # noqa: WPS323
         self.api = FastAPI(version=config.version, title=config.auth_title, docs_url="/")
         self._services = service_container
         self._add_endpoints_to_api()
