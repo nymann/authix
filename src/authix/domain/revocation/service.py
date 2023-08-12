@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from pydantic import UUID4
@@ -22,7 +23,7 @@ class RevocationService:
             raise Unauthorized
         logging.debug(f"{user_id} revoked their refresh_token ({refresh_token})")
         event = RevocationEvent(user_id=user_id)
-        await self._publisher.publish(revocation_event=event)
+        asyncio.create_task(self._publisher.publish_and_forget(revocation_event=event))
 
     async def _revoke_refresh_token(self, refresh_token: str) -> UUID4:
         return await self._refresh_queries.delete(refresh_token=refresh_token)

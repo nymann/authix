@@ -13,4 +13,4 @@ class PublicKey(GetEndpoint):
         return "/public_key"
 
     async def endpoint(self) -> str:
-        return self._key_service.get_public_key()
+        return self._key_service.get_public_key().decode()

@@ -13,6 +13,12 @@ class RevocationPublisher:
         self._producer = Producer({"bootstrap.servers": config.bootstrap_servers()})
         self._topic = config.kafka_topic
 
+    async def publish_and_forget(self, revocation_event: RevocationEvent) -> None:
+        try:
+            await self.publish(revocation_event=revocation_event)
+        except Exception as e:
+            logging.error(f"Failed to publish revocation event {revocation_event}", e)
+
     async def publish(self, revocation_event: RevocationEvent) -> None:
         logging.info("sending kafka event")
         self._producer.poll(0)

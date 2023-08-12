@@ -2,36 +2,36 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
-import bcrypt
 import jwt
+from jwt.utils import get_int_from_datetime
 
 from authix.data.users.model import UserModel
 from authix.domain.key.service import KeyService
+from authix.domain.token.password_hashing_strategies.argon_id import ArgonIDPasswordHashingStrategy
+from authix.domain.token.password_hashing_strategies.bcrypt import BcryptPasswordHashingStrategy
+from authix.domain.token.password_hashing_strategy import PasswordHashingStrategy
 
 
 class TokenService:
     def __init__(self, key_service: KeyService) -> None:
         self._key_service = key_service
         self._charset = "utf-8"
+        self._password_hasher: PasswordHashingStrategy = BcryptPasswordHashingStrategy()
+        self.jwt = jwt.JWT()
+        self.private_key = self._key_service.get_private_key()
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        return bcrypt.checkpw(
-            plain_password.encode(self._charset),
-            hashed_password.encode(self._charset),
-        )
+        return self._password_hasher.verify_password(plain_password=plain_password, hashed_password=hashed_password)
 
     def create_password_hash(self, plain_password: str) -> str:
-        hashed_password = bcrypt.hashpw(
-            plain_password.encode(self._charset),
-            bcrypt.gensalt(),
-        )
-        return hashed_password.decode(self._charset)
+        return self._password_hasher.create_password_hash(plain_password)
 
     def create_access_token(self, user: UserModel) -> str:
+        utc_now = datetime.now(tz=timezone.utc)
         claims = {
             "id": str(user.id),
             "email": user.email,
-            "exp": datetime.now(tz=timezone.utc) + timedelta(minutes=5),
+            "iat": get_int_from_datetime(utc_now),
+            "exp": get_int_from_datetime(utc_now + timedelta(minutes=5)),
         }
-        private_key = self._key_service.get_private_key()
-        return jwt.encode(payload=claims, key=private_key, algorithm="RS256")
+        return self.jwt.encode(payload=claims, key=self.private_key, alg="RS256")
