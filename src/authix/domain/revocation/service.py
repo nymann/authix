@@ -1,11 +1,10 @@
 import asyncio
 import logging
 
-from pydantic import UUID4
-
 from authix.core.config import RevocationConfig
 from authix.data.query_exceptions import QueryResultNotFoundError
 from authix.data.refresh_token.refresh_token_queries import RefreshQueries
+from authix.domain.device_id import generate_device_id
 from authix.domain.domain_exceptions import Unauthorized
 from authix.domain.revocation.event import RevocationEvent
 from authix.domain.revocation.publisher import RevocationPublisher
@@ -18,12 +17,13 @@ class RevocationService:
 
     async def revoke(self, refresh_token: str) -> None:
         try:
-            user_id = await self._revoke_refresh_token(refresh_token=refresh_token)
+            revocation_event = await self._revoke_refresh_token(refresh_token=refresh_token)
         except QueryResultNotFoundError:
             raise Unauthorized
-        logging.debug(f"{user_id} revoked their refresh_token ({refresh_token})")
-        event = RevocationEvent(user_id=user_id)
-        asyncio.create_task(self._publisher.publish_and_forget(revocation_event=event))
+        asyncio.create_task(self._publisher.publish_and_forget(revocation_event=revocation_event))
 
-    async def _revoke_refresh_token(self, refresh_token: str) -> UUID4:
-        return await self._refresh_queries.delete(refresh_token=refresh_token)
+    async def _revoke_refresh_token(self, refresh_token: str) -> RevocationEvent:
+        device_id = generate_device_id(refresh_token=refresh_token)
+        user_id = await self._refresh_queries.delete(refresh_token=refresh_token)
+        logging.debug(f"user.id '{user_id}' revoked refresh_token '{refresh_token}', for device '{device_id}'.")
+        return RevocationEvent(user_id=user_id, device_id=device_id)

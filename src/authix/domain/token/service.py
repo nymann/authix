@@ -6,9 +6,9 @@ import jwt
 from jwt.utils import get_int_from_datetime
 
 from authix.data.users.model import UserModel
+from authix.domain.device_id import generate_device_id
 from authix.domain.key.service import KeyService
 from authix.domain.token.password_hashing_strategies.argon_id import ArgonIDPasswordHashingStrategy
-from authix.domain.token.password_hashing_strategies.bcrypt import BcryptPasswordHashingStrategy
 from authix.domain.token.password_hashing_strategy import PasswordHashingStrategy
 
 
@@ -16,7 +16,7 @@ class TokenService:
     def __init__(self, key_service: KeyService) -> None:
         self._key_service = key_service
         self._charset = "utf-8"
-        self._password_hasher: PasswordHashingStrategy = BcryptPasswordHashingStrategy()
+        self._password_hasher: PasswordHashingStrategy = ArgonIDPasswordHashingStrategy()
         self.jwt = jwt.JWT()
         self.private_key = self._key_service.get_private_key()
 
@@ -26,11 +26,12 @@ class TokenService:
     def create_password_hash(self, plain_password: str) -> str:
         return self._password_hasher.create_password_hash(plain_password)
 
-    def create_access_token(self, user: UserModel) -> str:
+    def create_access_token(self, user: UserModel, refresh_token: str) -> str:
         utc_now = datetime.now(tz=timezone.utc)
         claims = {
             "id": str(user.id),
             "email": user.email,
+            "device_id": generate_device_id(refresh_token=refresh_token),
             "iat": get_int_from_datetime(utc_now),
             "exp": get_int_from_datetime(utc_now + timedelta(minutes=5)),
         }
