@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from pydantic import UUID4
 from pymongo import MongoClient
+from pymongo.collection import Collection
 
 from authix.core.config import AuthConfig
 from authix.data.query_exceptions import QueryResultNotFoundError
@@ -15,7 +16,9 @@ class MongoDBUserQueries(UserQueries):
     def __init__(self, config: AuthConfig) -> None:
         self._client: MongoClient = MongoClient(config.mongodb_url)
         self._db = self._client.users
-        self._users = self._db.users
+        self._users: Collection = self._db.users
+        self._users.create_index("id")
+        self._users.create_index("email")
 
     async def get_user_by_email(self, email: str) -> UserModel:
         user = self._users.find_one({"email": email})
