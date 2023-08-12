@@ -5,7 +5,7 @@ from pogo_api.endpoint import Endpoint
 
 from authix.core.config import AuthConfig
 from authix.core.service_container import ServiceContainer
-from authix.endpoints.create_access_token import CreateAccessToken
+from authix.endpoints.access_token import AccessToken
 from authix.endpoints.login import Login
 from authix.endpoints.logout import Logout
 from authix.endpoints.public_key import PublicKey
@@ -21,7 +21,7 @@ class AuthService:
 
     def _get_endpoints(self) -> list[Endpoint]:
         return [
-            CreateAccessToken(authentication_service=self._services.authentication_service()),
+            AccessToken(authentication_service=self._services.authentication_service()),
             Login(authentication_service=self._services.authentication_service()),
             Logout(revocation_service=self._services.revocation_service()),
             PublicKey(key_service=self._services.key_service()),
