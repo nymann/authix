@@ -36,7 +36,7 @@ class AuthenticationService:
 
         refresh_token = str(uuid4())
         await self._refresh_queries.add(refresh_token=refresh_token, user_id=user.id)
-        access_token = self._token_service.create_access_token(user=user)
+        access_token = self._token_service.create_access_token(user=user, refresh_token=refresh_token)
         return AuthResponse(access_token=access_token, refresh_token=refresh_token)
 
     async def create_access_token(self, refresh_token: str) -> str:
@@ -48,4 +48,4 @@ class AuthenticationService:
             user = await self._user_queries.get_user_by_id(user_id=user_id)
         except QueryResultNotFoundError:
             raise Unauthorized
-        return self._token_service.create_access_token(user=user)
+        return self._token_service.create_access_token(user=user, refresh_token=refresh_token)

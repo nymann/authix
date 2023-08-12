@@ -20,7 +20,6 @@ class RevocationPublisher:
             logging.error(f"Failed to publish revocation event {revocation_event}", e)
 
     async def publish(self, revocation_event: RevocationEvent) -> None:
-        logging.info("sending kafka event")
         self._producer.poll(0)
         self._producer.produce(
             topic=self._topic,
@@ -31,6 +30,6 @@ class RevocationPublisher:
 
     def _on_delivery(self, error: KafkaError, message: Message) -> None:
         if error:
-            logging.error("Failed to publish.")
+            logging.error(f"Failed to publish message to '{self._topic}'.")
         else:
-            logging.debug("Published %s successfully", message.key())
+            logging.debug(f"Published {message.key()} successfully to '{self._topic}'")
