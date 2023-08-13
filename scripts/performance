@@ -112,6 +112,15 @@ class LoginTest(AuthTest):
         await self.api.login(session, email, password)
 
 
+class LogoutTest(AuthTest):
+    async def test_method(self, session: aiohttp.ClientSession) -> None:
+        email = self.random_email()
+        password = self.random_password()
+        await self.api.register(session, email, password)
+        await self.api.login(session, email, password)
+        await self.api.logout(session)
+
+
 class AccessToken(AuthTest):
     def __init__(self, register_repetitions: int, access_token_repetitions: int):
         self.access_token_repetitions = access_token_repetitions
@@ -125,6 +134,12 @@ class AccessToken(AuthTest):
         async with asyncio.TaskGroup() as tg:
             for _ in range(self.access_token_repetitions):
                 tg.create_task(self.api.access_token(session))
+
+
+@app.command()
+def logout(rep: int = 200):
+    auth_test = LogoutTest(rep)
+    asyncio.run(auth_test.run_test())
 
 
 @app.command()
