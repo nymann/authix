@@ -25,5 +25,5 @@ class RevocationService:
     async def _revoke_refresh_token(self, refresh_token: str) -> RevocationEvent:
         device_id = generate_device_id(refresh_token=refresh_token)
         user_id = await self._refresh_queries.delete(refresh_token=refresh_token)
-        logging.debug(f"user.id '{user_id}' revoked refresh_token '{refresh_token}', for device '{device_id}'.")
+        logging.debug("user.id '%s' revoked refresh_token '%s', for device '%s'.", user_id, refresh_token, device_id)
         return RevocationEvent(user_id=user_id, device_id=device_id)
