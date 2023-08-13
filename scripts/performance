@@ -1,0 +1,149 @@
+#!/usr/bin/env python3
+
+from abc import ABC
+from abc import abstractmethod
+import asyncio
+import time
+from typing import Any
+from uuid import uuid4
+
+import aiohttp
+from devtools import debug
+import typer
+
+app = typer.Typer()
+
+
+class AuthenticationApi:
+    def __init__(self, semaphore_count=16, max_retries=5, retry_delay=10):
+        self.request_count_200 = 0
+        self.requests = {}
+        self.exceptions: list[Exception] = []
+        self.semaphore = asyncio.Semaphore(semaphore_count)
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
+
+    async def request(self, method, endpoint: str, **kwargs: Any) -> aiohttp.ClientResponse:
+        try:
+            async with self.semaphore, method(endpoint, **kwargs) as response:
+                if response.status not in self.requests:
+                    self.requests[response.status] = 0
+                self.requests[response.status] += 1
+                return response
+        except (
+            aiohttp.ClientConnectorError,
+            aiohttp.ServerTimeoutError,
+            aiohttp.ServerDisconnectedError,
+            aiohttp.ClientOSError,
+        ) as e:
+            self.exceptions.append(e)
+
+        raise Exception(f"{endpoint} Failed after {self.max_retries} retries {kwargs}")
+
+    async def register(self, session: aiohttp.ClientSession, email: str, password: str) -> None:
+        json = {"email": email, "password": password}
+        response = await self.request(session.post, "/register", json=json)
+        if response.status != 200:
+            print(f"Register - Status: {response.status}, email: {email}, password: {password}.")
+
+    async def login(self, session: aiohttp.ClientSession, email: str, password: str) -> None:
+        json = {"email": email, "password": password}
+        response = await self.request(session.post, "/login", json=json)
+        if response.status != 200:
+            print(f"Login - Status: {response.status}, email: {email}, password: {password}.")
+
+    async def access_token(self, session: aiohttp.ClientSession) -> None:
+        response = await self.request(session.post, "/access_token")
+        if response.status != 200:
+            print("Access Code - Status:", response.status)
+
+    async def logout(self, session: aiohttp.ClientSession) -> None:
+        response = await self.request(session.delete, "/logout")
+        if response.status != 200:
+            print("Logout - Status:", response.status, session)
+
+
+class AuthTest(ABC):
+    def __init__(self, repetitions: int, base_url="http://localhost:8660", semaphore_count: int = 16):
+        self.repetitions = repetitions
+        self.api = AuthenticationApi(semaphore_count)
+        self.base_url = base_url
+
+    async def execute_test(self):
+        async with aiohttp.ClientSession(base_url=self.base_url) as session:
+            try:
+                await self.test_method(session)
+            except Exception:
+                pass
+
+    @abstractmethod
+    async def test_method(self, session: aiohttp.ClientSession) -> None:
+        raise NotImplementedError
+
+    async def run_test(self):
+        start_time = time.time()
+        async with asyncio.TaskGroup() as tg:
+            for _ in range(self.repetitions):
+                tg.create_task(self.execute_test())
+        print(time.time() - start_time)
+        debug(self.api.requests, self.api.exceptions)
+
+    @staticmethod
+    def random_email() -> str:
+        return f"{uuid4()}@example.org"
+
+    @staticmethod
+    def random_password() -> str:
+        return f"{uuid4()}!Aa"
+
+
+class RegisterAuthTest(AuthTest):
+    async def test_method(self, session: aiohttp.ClientSession) -> None:
+        email = self.random_email()
+        password = self.random_password()
+        await self.api.register(session, email, password)
+
+
+class LoginTest(AuthTest):
+    async def test_method(self, session: aiohttp.ClientSession) -> None:
+        email = self.random_email()
+        password = self.random_password()
+        await self.api.register(session, email, password)
+        await self.api.login(session, email, password)
+
+
+class AccessToken(AuthTest):
+    def __init__(self, register_repetitions: int, access_token_repetitions: int):
+        self.access_token_repetitions = access_token_repetitions
+        super().__init__(register_repetitions)
+
+    async def test_method(self, session: aiohttp.ClientSession) -> None:
+        email = self.random_email()
+        password = self.random_password()
+        await self.api.register(session, email, password)
+        await self.api.login(session, email, password)
+        async with asyncio.TaskGroup() as tg:
+            for _ in range(self.access_token_repetitions):
+                tg.create_task(self.api.access_token(session))
+
+
+@app.command()
+def register(rep: int = 200):
+    auth_test = RegisterAuthTest(rep)
+    asyncio.run(auth_test.run_test())
+
+
+@app.command()
+def login(rep: int = 200):
+    auth_test = LoginTest(rep)
+    asyncio.run(auth_test.run_test())
+
+
+@app.command()
+def access_token(register_rep: int = 5, rep: int = 200):
+    auth_test = AccessToken(register_repetitions=register_rep, access_token_repetitions=rep)
+    asyncio.run(auth_test.run_test())
+
+
+if __name__ == "__main__":
+    app()

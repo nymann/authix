@@ -36,7 +36,7 @@ class AuthConfig(BaseSettings):
     revocation: RevocationConfig
     version: str = __version__
 
-    model_config: SettingsConfigDict = SettingsConfigDict(
+    model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         env_nested_delimiter="__",

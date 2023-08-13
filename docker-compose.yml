@@ -50,6 +50,7 @@ services:
     ports:
       - "9092:9092"
       - "9093:9093"
+    restart: always
     volumes:
       - "kafka_data:/bitnami"
     environment:

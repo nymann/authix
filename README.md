@@ -56,7 +56,31 @@ graph TB
 
 ## Performance
 
-On a single computer, running Authix via uvicorn with 16 workers, expect it to
-handle ~1600 `/register` events/second. This could be scaled up easily by
-running more nodes, since the bottleneck is the password hashing and
-verification.
+On a single computer, running Authix via uvicorn with 16 workers, expect:
+
+Create 1K users
+
+```
+1000 /register
+
+2.97 seconds
+```
+
+Create 1K users, and login each user.
+
+```
+1000 /register
+1000 /login
+
+6.28 seconds
+```
+
+Create 10 users, for each user login, and call `/access_token` 1K times.
+
+```
+10 /register
+10 /login
+10000 /access_token
+
+3.43 seconds
+```

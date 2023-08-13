@@ -1,5 +1,4 @@
 from typing import Any, Optional
-from uuid import uuid4
 
 from pydantic import UUID4
 from pymongo import MongoClient
@@ -32,7 +31,7 @@ class MongoDBUserQueries(UserQueries):
         try:
             await self.get_user_by_email(email=email)
         except QueryResultNotFoundError:
-            return self._create_user(email=email, password_hash=password_hash)
+            return self._create_user(user=UserModel(email=email, password_hash=password_hash))
         raise UserAlreadyExistsError
 
     def _transform_query_result(self, user: Optional[dict[str, Any]]) -> UserModel:
@@ -44,17 +43,6 @@ class MongoDBUserQueries(UserQueries):
             password_hash=user["password_hash"],
         )
 
-    def _create_user(self, email: str, password_hash: str) -> UserModel:
-        user = UserModel(
-            id=uuid4(),
-            email=email,
-            password_hash=password_hash,
-        )
-        self._users.insert_one(
-            {
-                "email": user.email,
-                "password_hash": user.password_hash,
-                "id": str(user.id),
-            },
-        )
+    def _create_user(self, user: UserModel) -> UserModel:
+        self._users.insert_one(user.to_dict())
         return user
