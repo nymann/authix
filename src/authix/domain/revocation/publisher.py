@@ -31,6 +31,6 @@ class RevocationPublisher:
 
     def _on_delivery(self, error: KafkaError, message: Message) -> None:
         if error:
-            logging.error("Failed to publish.")
+            logging.error(f"Failed to publish message to '{self._topic}'.")
         else:
-            logging.debug("Published %s successfully", message.key())
+            logging.debug(f"Published {message.key()} successfully to '{self._topic}'")

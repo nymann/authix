@@ -50,9 +50,9 @@ services:
     ports:
       - "9092:9092"
       - "9093:9093"
-    restart: always
     volumes:
       - "kafka_data:/bitnami"
+    restart: always
     environment:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
