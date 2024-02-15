@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
@@ -33,7 +34,7 @@ class AuthConfig(BaseSettings):
     mongodb_url: str
     password: PasswordConfig
     refresh_redis: str
-    revocation: RevocationConfig
+    revocation: Optional[RevocationConfig] = None
     version: str = __version__
 
     model_config = SettingsConfigDict(

@@ -6,6 +6,8 @@ from authix.data.users.user_queries import UserQueries
 from authix.domain.authentication.service import AuthenticationService
 from authix.domain.key.service import KeyService
 from authix.domain.registration.service import RegistrationService
+from authix.domain.revocation.publisher import RevocationPublisher
+from authix.domain.revocation.publishers.kafka_publisher import RevocationKafkaPublisher
 from authix.domain.revocation.service import RevocationService
 from authix.domain.token.service import TokenService
 
@@ -26,7 +28,7 @@ class ServiceContainer:
     def revocation_service(self) -> RevocationService:
         return RevocationService(
             refresh_queries=self.refresh_queries,
-            config=self.config.revocation,
+            revocation_publisher=self._revocation_publisher(),
         )
 
     def token_service(self) -> TokenService:
@@ -41,3 +43,8 @@ class ServiceContainer:
             user_queries=self.user_queries,
             config=self.config,
         )
+
+    def _revocation_publisher(self) -> RevocationPublisher:
+        if self.config.revocation is not None:
+            return RevocationKafkaPublisher(config=self.config.revocation)
+        return RevocationPublisher()

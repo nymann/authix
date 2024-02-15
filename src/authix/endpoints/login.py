@@ -16,5 +16,5 @@ class Login(PostEndpoint):
             email=request.email,
             password=request.password.get_secret_value(),
         )
-        response.set_cookie("refresh_token", auth_response.refresh_token, httponly=True)
+        response.set_cookie("refresh_token", auth_response.refresh_token, httponly=True, samesite="strict")
         response.headers["Authorization"] = f"JWT {auth_response.access_token}"
