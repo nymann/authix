@@ -6,6 +6,51 @@ Brian Pontarelli](https://www.youtube.com/watch?v=SLc3cTlypwM).
 Authix provides a comprehensive solution for user authentication, built on the
 principles of JWT (pronounced 'jot') and refresh tokens.
 
+## How do I run this?
+
+```yml
+version: "3.8"
+
+services:
+  authix:
+    image: nymann/authix:latest
+    networks:
+      - authix
+    environment:
+      - AUTH_TITLE="Auth Service"
+      - KEY_FOLDER="keys"
+      - LOG_LEVEL=DEBUG
+      - MONGODB_URL="mongodb://authix:test123@user_mongodb:27017"
+      - PASSWORD__MAX_LENGTH=128
+      - PASSWORD__MIN_LENGTH=12
+      - PASSWORD__MIN_DIGITS=1
+      - PASSWORD__MIN_LOWERCASE_CHARS=1
+      - PASSWORD__MIN_SPECIAL_CHARS=1
+      - PASSWORD__MIN_UPPERCASE_CHARS=1
+      - PASSWORD__SYMBOLS='!@#$%^&*()[]-_=+{}\|";:<>,.'
+      - REFRESH_REDIS="redis://:test123@refresh_redis:6379"
+  refresh_redis:
+    container_name: refresh_redis
+    build:
+      context: docker
+      dockerfile: redis.Dockerfile
+    networks:
+      - authix
+    volumes:
+      - ./docker/redis.conf:/usr/local/etc/redis/redis.conf
+      - /tmp/refresh_redis_data:/data
+  user_mongodb:
+    image: mongo:latest
+    container_name: user_mongodb
+    networks:
+      - authix
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: authix
+      MONGO_INITDB_ROOT_PASSWORD: test123
+    volumes:
+      - /tmp/authix_mongo_db:/data/db
+```
+
 ## Key Features
 
 1. **User Registration**: Users can sign up using their email and password.
