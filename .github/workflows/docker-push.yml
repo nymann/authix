@@ -13,7 +13,6 @@ jobs:
       - name: docker login
         uses: azure/docker-login@v1
         with:
-          login-server: registry.nymann.dev
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: docker push
