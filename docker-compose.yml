@@ -6,8 +6,6 @@ services:
     build:
       context: docker
       dockerfile: redis.Dockerfile
-    networks:
-      - redis_network
     ports:
       - 6379:6379
     volumes:
@@ -16,8 +14,6 @@ services:
   user_mongodb:
     image: mongo:latest
     container_name: user_mongodb
-    networks:
-      - redis_network
     ports:
       - 27017:27017
     environment:
@@ -59,24 +55,9 @@ services:
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-  revocation_redis:
-    container_name: revocation_redis
-    build:
-      context: docker
-      dockerfile: redis.Dockerfile
-    networks:
-      - redis_network
-    ports:
-      - 6378:6379
-    volumes:
-      - ./docker/redis.conf:/usr/local/etc/redis/redis.conf
-      - /tmp/revocation_redis_data:/data
 
 volumes:
   zookeeper_data:
     driver: local
   kafka_data:
     driver: local
-
-networks:
-  redis_network:
